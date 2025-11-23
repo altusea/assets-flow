@@ -97,7 +97,13 @@ const loadAccounts = async () => {
 
 const saveAccount = async () => {
   if (editingAccount.value) {
-    await storageService.updateAccount(editingAccount.value.id, formData.value);
+    // 确保类型匹配，只传递允许更新的字段
+    const updates = {
+      name: formData.value.name,
+      type: formData.value.type as Account['type'],
+      description: formData.value.description,
+    };
+    await storageService.updateAccount(editingAccount.value.id, updates);
   } else {
     await storageService.saveAccount(formData.value);
   }
