@@ -1,9 +1,7 @@
 import { Account, WeeklyRecord, WeeklySummary, WeeklyNote, AccountWithChanges, getRecordDate } from './types';
-import { StorageService } from './storage';
-import { DrizzleStorageService } from './legacy-drizzle-storage';
-import { SQLiteStorageService } from './sqlite-storage';
+import { DrizzleStorageService as NewDrizzleStorageService } from './drizzle-storage';
 
-export type StorageType = 'localStorage' | 'drizzle' | 'sqlite';
+export type StorageType = 'drizzle-orm';
 
 // 存储服务接口，确保两个实现保持一致
 export interface IStorageService {
@@ -38,229 +36,80 @@ export interface IStorageService {
   initializeSampleData(): Promise<void> | void;
 }
 
-// 存储服务适配器 - localStorage 适配器
-class LocalStorageAdapter implements IStorageService {
+
+
+// 存储服务适配器 - Drizzle ORM 适配器（新版，基于 SQLite）
+class DrizzleOrmAdapter implements IStorageService {
   async getAccounts(): Promise<Account[]> {
-    return StorageService.getAccounts();
+    return NewDrizzleStorageService.getAccounts();
   }
 
   async saveAccount(account: Omit<Account, 'id' | 'createdAt'>): Promise<Account> {
-    return StorageService.saveAccount(account);
+    return NewDrizzleStorageService.saveAccount(account);
   }
 
   async updateAccount(id: string, updates: Partial<Account>): Promise<Account | null> {
-    return StorageService.updateAccount(id, updates);
+    return NewDrizzleStorageService.updateAccount(id, updates);
   }
 
   async deleteAccount(id: string): Promise<boolean> {
-    return StorageService.deleteAccount(id);
+    return NewDrizzleStorageService.deleteAccount(id);
   }
 
   async getWeeklyRecords(): Promise<WeeklyRecord[]> {
-    return StorageService.getWeeklyRecords();
+    return NewDrizzleStorageService.getWeeklyRecords();
   }
 
   async saveWeeklyRecord(record: Omit<WeeklyRecord, 'id' | 'createdAt' | 'updatedAt'>): Promise<WeeklyRecord> {
-    return StorageService.saveWeeklyRecord(record);
+    return NewDrizzleStorageService.saveWeeklyRecord(record);
   }
 
   async deleteWeeklyRecord(id: string): Promise<boolean> {
-    return StorageService.deleteWeeklyRecord(id);
+    return NewDrizzleStorageService.deleteWeeklyRecord(id);
   }
 
   async deleteWeeklyRecordsByAccount(accountId: string): Promise<void> {
-    return StorageService.deleteWeeklyRecordsByAccount(accountId);
+    return NewDrizzleStorageService.deleteWeeklyRecordsByAccount(accountId);
   }
 
   async getWeeklySummary(recordDate: string): Promise<WeeklySummary | null> {
-    return StorageService.getWeeklySummary(recordDate);
+    return NewDrizzleStorageService.getWeeklySummary(recordDate);
   }
 
   async getAllWeeklySummaries(): Promise<WeeklySummary[]> {
-    return StorageService.getAllWeeklySummaries();
+    return NewDrizzleStorageService.getAllWeeklySummaries();
   }
 
   async getRecentWeeks(count: number = 12): Promise<WeeklySummary[]> {
-    return StorageService.getRecentWeeks(count);
+    return NewDrizzleStorageService.getRecentWeeks(count);
   }
 
   async getAccountBalanceHistory(accountId: string, limit: number = 10): Promise<WeeklyRecord[]> {
-    return StorageService.getAccountBalanceHistory(accountId, limit);
+    return NewDrizzleStorageService.getAccountBalanceHistory(accountId, limit);
   }
 
   async getWeeklyNotes(): Promise<WeeklyNote[]> {
-    return StorageService.getWeeklyNotes();
+    return NewDrizzleStorageService.getWeeklyNotes();
   }
 
   async saveWeeklyNote(note: Omit<WeeklyNote, 'id' | 'createdAt' | 'updatedAt'>): Promise<WeeklyNote> {
-    return StorageService.saveWeeklyNote(note);
+    return NewDrizzleStorageService.saveWeeklyNote(note);
   }
 
   async getWeeklyNote(recordDate: string): Promise<WeeklyNote | null> {
-    return StorageService.getWeeklyNote(recordDate);
+    return NewDrizzleStorageService.getWeeklyNote(recordDate);
   }
 
   async calculateAccountChanges(accountId: string, currentRecordDate: string): Promise<AccountWithChanges | null> {
-    return StorageService.calculateAccountChanges(accountId, currentRecordDate);
+    return NewDrizzleStorageService.calculateAccountChanges(accountId, currentRecordDate);
   }
 
   async getAllAccountsWithChanges(currentRecordDate: string = getRecordDate()): Promise<AccountWithChanges[]> {
-    return StorageService.getAllAccountsWithChanges(currentRecordDate);
+    return NewDrizzleStorageService.getAllAccountsWithChanges(currentRecordDate);
   }
 
   async initializeSampleData(): Promise<void> {
-    return StorageService.initializeSampleData();
-  }
-}
-
-
-// 存储服务适配器 - SQLite 适配器
-class SQLiteAdapter implements IStorageService {
-  async getAccounts(): Promise<Account[]> {
-    return SQLiteStorageService.getAccounts();
-  }
-
-  async saveAccount(account: Omit<Account, 'id' | 'createdAt'>): Promise<Account> {
-    return SQLiteStorageService.saveAccount(account);
-  }
-
-  async updateAccount(id: string, updates: Partial<Account>): Promise<Account | null> {
-    return SQLiteStorageService.updateAccount(id, updates);
-  }
-
-  async deleteAccount(id: string): Promise<boolean> {
-    return SQLiteStorageService.deleteAccount(id);
-  }
-
-  async getWeeklyRecords(): Promise<WeeklyRecord[]> {
-    return SQLiteStorageService.getWeeklyRecords();
-  }
-
-  async saveWeeklyRecord(record: Omit<WeeklyRecord, 'id' | 'createdAt' | 'updatedAt'>): Promise<WeeklyRecord> {
-    return SQLiteStorageService.saveWeeklyRecord(record);
-  }
-
-  async deleteWeeklyRecord(id: string): Promise<boolean> {
-    return SQLiteStorageService.deleteWeeklyRecord(id);
-  }
-
-  async deleteWeeklyRecordsByAccount(accountId: string): Promise<void> {
-    return SQLiteStorageService.deleteWeeklyRecordsByAccount(accountId);
-  }
-
-  async getWeeklySummary(recordDate: string): Promise<WeeklySummary | null> {
-    return SQLiteStorageService.getWeeklySummary(recordDate);
-  }
-
-  async getAllWeeklySummaries(): Promise<WeeklySummary[]> {
-    return SQLiteStorageService.getAllWeeklySummaries();
-  }
-
-  async getRecentWeeks(count: number = 12): Promise<WeeklySummary[]> {
-    return SQLiteStorageService.getRecentWeeks(count);
-  }
-
-  async getAccountBalanceHistory(accountId: string, limit: number = 10): Promise<WeeklyRecord[]> {
-    return SQLiteStorageService.getAccountBalanceHistory(accountId, limit);
-  }
-
-  async getWeeklyNotes(): Promise<WeeklyNote[]> {
-    return SQLiteStorageService.getWeeklyNotes();
-  }
-
-  async saveWeeklyNote(note: Omit<WeeklyNote, 'id' | 'createdAt' | 'updatedAt'>): Promise<WeeklyNote> {
-    return SQLiteStorageService.saveWeeklyNote(note);
-  }
-
-  async getWeeklyNote(recordDate: string): Promise<WeeklyNote | null> {
-    return SQLiteStorageService.getWeeklyNote(recordDate);
-  }
-
-  async calculateAccountChanges(accountId: string, currentRecordDate: string): Promise<AccountWithChanges | null> {
-    return SQLiteStorageService.calculateAccountChanges(accountId, currentRecordDate);
-  }
-
-  async getAllAccountsWithChanges(currentRecordDate: string = getRecordDate()): Promise<AccountWithChanges[]> {
-    return SQLiteStorageService.getAllAccountsWithChanges(currentRecordDate);
-  }
-
-  async initializeSampleData(): Promise<void> {
-    return SQLiteStorageService.initializeSampleData();
-  }
-}
-
-// 存储服务适配器 - Drizzle 适配器
-class DrizzleAdapter implements IStorageService {
-  async getAccounts(): Promise<Account[]> {
-    return DrizzleStorageService.getAccounts();
-  }
-
-  async saveAccount(account: Omit<Account, 'id' | 'createdAt'>): Promise<Account> {
-    return DrizzleStorageService.saveAccount(account);
-  }
-
-  async updateAccount(id: string, updates: Partial<Account>): Promise<Account | null> {
-    return DrizzleStorageService.updateAccount(id, updates);
-  }
-
-  async deleteAccount(id: string): Promise<boolean> {
-    return DrizzleStorageService.deleteAccount(id);
-  }
-
-  async getWeeklyRecords(): Promise<WeeklyRecord[]> {
-    return DrizzleStorageService.getWeeklyRecords();
-  }
-
-  async saveWeeklyRecord(record: Omit<WeeklyRecord, 'id' | 'createdAt' | 'updatedAt'>): Promise<WeeklyRecord> {
-    return DrizzleStorageService.saveWeeklyRecord(record);
-  }
-
-  async deleteWeeklyRecord(id: string): Promise<boolean> {
-    return DrizzleStorageService.deleteWeeklyRecord(id);
-  }
-
-  async deleteWeeklyRecordsByAccount(accountId: string): Promise<void> {
-    return DrizzleStorageService.deleteWeeklyRecordsByAccount(accountId);
-  }
-
-  async getWeeklySummary(recordDate: string): Promise<WeeklySummary | null> {
-    return DrizzleStorageService.getWeeklySummary(recordDate);
-  }
-
-  async getAllWeeklySummaries(): Promise<WeeklySummary[]> {
-    return DrizzleStorageService.getAllWeeklySummaries();
-  }
-
-  async getRecentWeeks(count: number = 12): Promise<WeeklySummary[]> {
-    return DrizzleStorageService.getRecentWeeks(count);
-  }
-
-  async getAccountBalanceHistory(accountId: string, limit: number = 10): Promise<WeeklyRecord[]> {
-    return DrizzleStorageService.getAccountBalanceHistory(accountId, limit);
-  }
-
-  async getWeeklyNotes(): Promise<WeeklyNote[]> {
-    return DrizzleStorageService.getWeeklyNotes();
-  }
-
-  async saveWeeklyNote(note: Omit<WeeklyNote, 'id' | 'createdAt' | 'updatedAt'>): Promise<WeeklyNote> {
-    return DrizzleStorageService.saveWeeklyNote(note);
-  }
-
-  async getWeeklyNote(recordDate: string): Promise<WeeklyNote | null> {
-    return DrizzleStorageService.getWeeklyNote(recordDate);
-  }
-
-  async calculateAccountChanges(accountId: string, currentRecordDate: string): Promise<AccountWithChanges | null> {
-    return DrizzleStorageService.calculateAccountChanges(accountId, currentRecordDate);
-  }
-
-  async getAllAccountsWithChanges(currentRecordDate: string = getRecordDate()): Promise<AccountWithChanges[]> {
-    return DrizzleStorageService.getAllAccountsWithChanges(currentRecordDate);
-  }
-
-  async initializeSampleData(): Promise<void> {
-    return DrizzleStorageService.initializeSampleData();
+    return NewDrizzleStorageService.initializeSampleData();
   }
 }
 
@@ -269,27 +118,14 @@ export class StorageFactory {
   private static currentStorage: IStorageService | null = null;
   private static currentType: StorageType | null = null;
 
-  static async getStorageService(type: StorageType = 'sqlite'): Promise<IStorageService> {
+  static async getStorageService(type: StorageType = 'drizzle-orm'): Promise<IStorageService> {
     // 如果已经初始化过相同类型的服务，直接返回
     if (this.currentStorage && this.currentType === type) {
       return this.currentStorage;
     }
 
-    // 根据类型创建相应的服务
-    switch (type) {
-      case 'localStorage':
-        this.currentStorage = new LocalStorageAdapter();
-        break;
-      case 'drizzle':
-        this.currentStorage = new DrizzleAdapter();
-        break;
-      case 'sqlite':
-        this.currentStorage = new SQLiteAdapter();
-        break;
-      default:
-        throw new Error(`Unsupported storage type: ${type}`);
-    }
-
+    // 创建 Drizzle ORM 服务
+    this.currentStorage = new DrizzleOrmAdapter();
     this.currentType = type;
     return this.currentStorage;
   }
@@ -302,60 +138,10 @@ export class StorageFactory {
     return this.getStorageService(type);
   }
 
-  // 数据迁移
-  static async migrateToSQLite(): Promise<void> {
-    try {
-      console.log('Starting migration to SQLite...');
-
-      // 初始化 SQLite
-      await this.getStorageService('sqlite');
-
-      // 执行迁移
-      await SQLiteStorageService.migrateFromLocalStorage();
-
-      console.log('Migration to SQLite completed successfully');
-    } catch (error) {
-      console.error('Migration to SQLite failed:', error);
-      throw error;
-    }
-  }
-
-  // 向后兼容 - 保持原有方法名
-  static async migrateToDrizzle(): Promise<void> {
-    return this.migrateToSQLite();
-  }
-
-  // 检查是否需要迁移到 SQLite
-  static async shouldMigrateToSQLite(): Promise<boolean> {
-    try {
-      // 检查 localStorage 是否有数据
-      const hasLocalStorageData = localStorage.getItem('assets_accounts') ||
-                                  localStorage.getItem('assets_weekly_records') ||
-                                  localStorage.getItem('assets_weekly_notes');
-
-      if (!hasLocalStorageData) {
-        return false;
-      }
-
-      // 检查 SQLite 是否已有数据
-      const sqliteService = await this.getStorageService('sqlite');
-      const accounts = await sqliteService.getAccounts();
-
-      return accounts.length === 0; // 如果 localStorage 有数据但 SQLite 没有，则需要迁移
-    } catch (error) {
-      console.error('Error checking migration status:', error);
-      return false;
-    }
-  }
-
-  // 向后兼容 - 保持原有方法名
-  static async shouldMigrateToDrizzle(): Promise<boolean> {
-    return this.shouldMigrateToSQLite();
-  }
 }
 
 // 为了向后兼容，导出一个默认的存储服务实例
-// 默认使用 localStorage，保持与现有代码的兼容性
+// 默认使用 Drizzle ORM + SQLite
 export const storageService = {
   async getAccounts(): Promise<Account[]> {
     const service = await StorageFactory.getStorageService();
