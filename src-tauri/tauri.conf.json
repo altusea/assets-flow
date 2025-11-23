@@ -23,7 +23,7 @@
   },
   "plugins": {
     "sql": {
-      "preload": true
+      "preload": ["sqlite:assets.db"]
     }
   },
   "bundle": {
