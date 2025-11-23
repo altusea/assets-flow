@@ -4,11 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development Commands
 
-- `npm run dev` - Start development server (runs on port 3000)
-- `npm run build` - Build for production (includes TypeScript check)
-- `npx vue-tsc --noEmit` - Type checking only
-- `npm run tauri dev` - Run as desktop app
-- `npm run tauri build` - Build desktop app
+- `pnpm dev` - Start development server (runs on port 3000)
+- `pnpm build` - Build for production (includes TypeScript check)
+- `pnpm vue-tsc --noEmit` - Type checking only
+- `pnpm tauri dev` - Run as desktop app
+- `pnpm tauri build` - Build desktop app
 
 ## Project Architecture
 
@@ -78,3 +78,9 @@ The application now supports **swappable storage backends** with a factory patte
 - Basic Tauri setup with opener plugin
 - Backend Rust code is minimal (mainly boilerplate)
 - All business logic implemented in TypeScript/Vue
+
+### Package Manager
+
+- Uses **pnpm** for dependency management (faster and more disk-efficient than npm)
+- Configured with `packageManager: "pnpm@10.6.5"` in package.json
+- Lockfile: `pnpm-lock.yaml`

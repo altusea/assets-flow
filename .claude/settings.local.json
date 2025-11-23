@@ -9,7 +9,13 @@
       "Bash(curl:*)",
       "Bash(node test-storage.js:*)",
       "Bash(npm run tauri:*)",
-      "Bash(./src-tauri/target/release/assets-flow:*)"
+      "Bash(./src-tauri/target/release/assets-flow:*)",
+      "Bash(rm:*)",
+      "Bash(pnpm install)",
+      "Bash(pnpm run build:*)",
+      "Bash(pnpm run dev)",
+      "Bash(cat:*)",
+      "Bash(pnpm tauri:*)"
     ],
     "deny": [],
     "ask": []
