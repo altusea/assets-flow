@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed } from 'vue';
 import { Line } from 'vue-chartjs';
 import {
   Chart as ChartJS,
@@ -10,28 +10,20 @@ import {
   Title,
   Tooltip,
   Legend,
-  ChartOptions
-} from 'chart.js'
+  ChartOptions,
+} from 'chart.js';
 import { storageService } from '../storage-factory';
 import { WeeklySummary, formatCurrency, formatDate } from '../types';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-)
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const weeklySummaries = ref<WeeklySummary[]>([]);
 const isLoading = ref(true);
 
 // 图表数据
 const chartData = computed(() => {
-  const sortedSummaries = [...weeklySummaries.value].sort((a, b) =>
-    new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime()
+  const sortedSummaries = [...weeklySummaries.value].sort(
+    (a, b) => new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime()
   );
 
   return {
@@ -44,9 +36,9 @@ const chartData = computed(() => {
         backgroundColor: 'rgba(25, 118, 210, 0.1)',
         borderWidth: 2,
         fill: true,
-        tension: 0.4
-      }
-    ]
+        tension: 0.4,
+      },
+    ],
   };
 });
 
@@ -60,26 +52,26 @@ const chartOptions: ChartOptions<'line'> = {
     },
     title: {
       display: true,
-      text: '总资金变化趋势'
+      text: '总资金变化趋势',
     },
     tooltip: {
       callbacks: {
-        label: function(context) {
+        label: function (context) {
           return `总资金: ${formatCurrency(context.parsed.y || 0)}`;
-        }
-      }
-    }
+        },
+      },
+    },
   },
   scales: {
     y: {
       beginAtZero: false,
       ticks: {
-        callback: function(value) {
+        callback: function (value) {
           return formatCurrency(Number(value));
-        }
-      }
-    }
-  }
+        },
+      },
+    },
+  },
 };
 
 // 加载数据
@@ -100,8 +92,8 @@ const loadData = async () => {
 const stats = computed(() => {
   if (weeklySummaries.value.length === 0) return null;
 
-  const sorted = [...weeklySummaries.value].sort((a, b) =>
-    new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime()
+  const sorted = [...weeklySummaries.value].sort(
+    (a, b) => new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime()
   );
 
   const latest = sorted[sorted.length - 1];
@@ -117,7 +109,7 @@ const stats = computed(() => {
     totalChange,
     recordCount: sorted.length,
     startDate: oldest.recordDate,
-    endDate: latest.recordDate
+    endDate: latest.recordDate,
   };
 });
 
@@ -140,13 +132,19 @@ onMounted(() => {
         <div class="stat-label">当前总资金</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value" :class="{ positive: stats.weeklyChange > 0, negative: stats.weeklyChange < 0 }">
+        <div
+          class="stat-value"
+          :class="{ positive: stats.weeklyChange > 0, negative: stats.weeklyChange < 0 }"
+        >
           {{ stats.weeklyChange > 0 ? '+' : '' }}{{ formatCurrency(stats.weeklyChange) }}
         </div>
         <div class="stat-label">周变动</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value" :class="{ positive: stats.totalChange > 0, negative: stats.totalChange < 0 }">
+        <div
+          class="stat-value"
+          :class="{ positive: stats.totalChange > 0, negative: stats.totalChange < 0 }"
+        >
           {{ stats.totalChange > 0 ? '+' : '' }}{{ formatCurrency(stats.totalChange) }}
         </div>
         <div class="stat-label">总变动</div>
@@ -185,7 +183,12 @@ onMounted(() => {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="summary in [...weeklySummaries].sort((a, b) => new Date(b.recordDate).getTime() - new Date(a.recordDate).getTime())" :key="summary.recordDate">
+            <tr
+              v-for="summary in [...weeklySummaries].sort(
+                (a, b) => new Date(b.recordDate).getTime() - new Date(a.recordDate).getTime()
+              )"
+              :key="summary.recordDate"
+            >
               <td>{{ formatDate(summary.recordDate) }}</td>
               <td>{{ formatCurrency(summary.totalBalance) }}</td>
               <td>{{ summary.accounts.length }}</td>
@@ -268,7 +271,8 @@ onMounted(() => {
   height: 400px;
 }
 
-.loading, .no-data {
+.loading,
+.no-data {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -288,8 +292,12 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .no-data-hint {
@@ -319,7 +327,8 @@ table {
   border-collapse: collapse;
 }
 
-th, td {
+th,
+td {
   padding: 12px;
   text-align: left;
   border-bottom: 1px solid #eee;
@@ -373,7 +382,8 @@ tr:hover {
     color: #f5f7fa;
   }
 
-  th, td {
+  th,
+  td {
     border-bottom: 1px solid #444;
   }
 

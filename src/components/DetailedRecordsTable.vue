@@ -8,12 +8,8 @@
             {{ formatWeekRange(week.recordDate) }}
           </option>
         </select>
-        <button @click="showNotesModal = true" class="btn btn-secondary">
-          📝 编辑备注
-        </button>
-        <button @click="exportTable" class="btn btn-outline">
-          📊 导出表格
-        </button>
+        <button @click="showNotesModal = true" class="btn btn-secondary">📝 编辑备注</button>
+        <button @click="exportTable" class="btn btn-outline">📊 导出表格</button>
       </div>
     </div>
 
@@ -39,7 +35,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="record in tableData" :key="record.recordDate" :class="{ 'current-week': record.isCurrentWeek }">
+          <tr
+            v-for="record in tableData"
+            :key="record.recordDate"
+            :class="{ 'current-week': record.isCurrentWeek }"
+          >
             <td class="time-cell">
               {{ formatTime(record.recordDate) }}
               <span v-if="record.isCurrentWeek" class="current-indicator">本周</span>
@@ -138,7 +138,7 @@ const showNotesModal = ref(false);
 const notesForm = ref({
   recordDate: '',
   incomeNote: '',
-  expenseNote: ''
+  expenseNote: '',
 });
 
 // 账户列配置
@@ -149,9 +149,8 @@ const accountColumns = [
   { key: 'cash', name: '现金' },
   { key: 'alipay', name: '支付宝' },
   { key: 'wechat', name: '微信' },
-  { key: 'funds', name: '基金股票' }
+  { key: 'funds', name: '基金股票' },
 ];
-
 
 const loadAvailableWeeks = async () => {
   availableWeeks.value = await storageService.getAllWeeklySummaries();
@@ -176,7 +175,8 @@ const loadTableData = async () => {
     else if (account.name.includes('现金')) accountToColumn[account.id] = 'cash';
     else if (account.name.includes('支付宝')) accountToColumn[account.id] = 'alipay';
     else if (account.name.includes('微信')) accountToColumn[account.id] = 'wechat';
-    else if (account.name.includes('基金') || account.name.includes('股票')) accountToColumn[account.id] = 'funds';
+    else if (account.name.includes('基金') || account.name.includes('股票'))
+      accountToColumn[account.id] = 'funds';
   });
 
   tableData.value = history.slice(0, 8).map((record, index) => {
@@ -203,12 +203,16 @@ const loadTableData = async () => {
     const note = notes.find(n => n.recordDate === record.recordDate);
 
     // 计算变动（简化版本，基于总资产）
-    const weeklyChange = index < history.length - 1 ?
-      record.totalBalance - history[index + 1].totalBalance : 0;
-    const monthlyChange = index < 4 && index + 4 < history.length ?
-      record.totalBalance - history[index + 4].totalBalance : 0;
-    const quarterlyChange = index < 12 && index + 12 < history.length ?
-      record.totalBalance - history[index + 12].totalBalance : 0;
+    const weeklyChange =
+      index < history.length - 1 ? record.totalBalance - history[index + 1].totalBalance : 0;
+    const monthlyChange =
+      index < 4 && index + 4 < history.length
+        ? record.totalBalance - history[index + 4].totalBalance
+        : 0;
+    const quarterlyChange =
+      index < 12 && index + 12 < history.length
+        ? record.totalBalance - history[index + 12].totalBalance
+        : 0;
 
     return {
       recordDate: record.recordDate,
@@ -219,7 +223,7 @@ const loadTableData = async () => {
       quarterlyChange,
       balances,
       expenseNote: note?.expenseNote,
-      incomeNote: note?.incomeNote
+      incomeNote: note?.incomeNote,
     };
   });
 };
@@ -256,11 +260,17 @@ const getChangeClass = (change: number): string => {
 };
 
 const getAccountAverage = (accountKey: string): number => {
-  return tableData.value.reduce((sum, record) => sum + (record.balances[accountKey] || 0), 0) / tableData.value.length || 0;
+  return (
+    tableData.value.reduce((sum, record) => sum + (record.balances[accountKey] || 0), 0) /
+      tableData.value.length || 0
+  );
 };
 
 const getOverallAverage = (): number => {
-  return tableData.value.reduce((sum, record) => sum + record.totalBalance, 0) / tableData.value.length || 0;
+  return (
+    tableData.value.reduce((sum, record) => sum + record.totalBalance, 0) /
+      tableData.value.length || 0
+  );
 };
 
 const editNote = async (recordDate: string) => {
@@ -269,7 +279,7 @@ const editNote = async (recordDate: string) => {
   notesForm.value = {
     recordDate,
     incomeNote: note?.incomeNote || '',
-    expenseNote: note?.expenseNote || ''
+    expenseNote: note?.expenseNote || '',
   };
 
   showNotesModal.value = true;
@@ -279,7 +289,7 @@ const saveNotes = async () => {
   await storageService.saveWeeklyNote({
     recordDate: notesForm.value.recordDate,
     incomeNote: notesForm.value.incomeNote || undefined,
-    expenseNote: notesForm.value.expenseNote || undefined
+    expenseNote: notesForm.value.expenseNote || undefined,
   });
 
   closeNotesModal();
@@ -291,7 +301,7 @@ const closeNotesModal = () => {
   notesForm.value = {
     recordDate: '',
     incomeNote: '',
-    expenseNote: ''
+    expenseNote: '',
   };
 };
 
@@ -307,8 +317,20 @@ const exportTable = () => {
 
 const generateCSV = (): string => {
   const headers = [
-    '记录时间', '建行', '工行', '广发', '现金', '支付宝', '微信', '基金股票',
-    '合计', '变动（周）', '变动（4/5周）', '变动（季度）', '备注（支出）', '备注（收入）'
+    '记录时间',
+    '建行',
+    '工行',
+    '广发',
+    '现金',
+    '支付宝',
+    '微信',
+    '基金股票',
+    '合计',
+    '变动（周）',
+    '变动（4/5周）',
+    '变动（季度）',
+    '备注（支出）',
+    '备注（收入）',
   ];
 
   const rows = tableData.value.map(record => [
@@ -319,12 +341,10 @@ const generateCSV = (): string => {
     record.monthlyChange,
     record.quarterlyChange,
     record.expenseNote || '',
-    record.incomeNote || ''
+    record.incomeNote || '',
   ]);
 
-  return [headers, ...rows]
-    .map(row => row.map(cell => `"${cell}"`).join(','))
-    .join('\n');
+  return [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
 };
 
 onMounted(async () => {

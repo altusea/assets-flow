@@ -11,7 +11,9 @@ export const accounts = sqliteTable('accounts', {
 
 export const weeklyRecords = sqliteTable('weekly_records', {
   id: text('id').primaryKey(),
-  accountId: text('accountId').notNull().references(() => accounts.id, { onDelete: 'cascade' }),
+  accountId: text('accountId')
+    .notNull()
+    .references(() => accounts.id, { onDelete: 'cascade' }),
   recordDate: text('recordDate').notNull(),
   balance: real('balance').notNull(),
   createdAt: text('createdAt').notNull(),

@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import Dashboard from "./components/Dashboard.vue";
-import AccountManager from "./components/AccountManager.vue";
-import WeeklyRecordManager from "./components/WeeklyRecordManager.vue";
-import DetailedRecordsTable from "./components/DetailedRecordsTable.vue";
-import StorageSettings from "./components/StorageSettings.vue";
-import StatisticsChart from "./components/StatisticsChart.vue";
-import { storageService } from "./storage-factory";
+import { ref, onMounted } from 'vue';
+import Dashboard from './components/Dashboard.vue';
+import AccountManager from './components/AccountManager.vue';
+import WeeklyRecordManager from './components/WeeklyRecordManager.vue';
+import DetailedRecordsTable from './components/DetailedRecordsTable.vue';
+import StorageSettings from './components/StorageSettings.vue';
+import StatisticsChart from './components/StatisticsChart.vue';
+import { storageService } from './storage-factory';
 
-const currentView = ref<'dashboard' | 'accounts' | 'records' | 'table' | 'settings' | 'statistics'>('dashboard');
+const currentView = ref<'dashboard' | 'accounts' | 'records' | 'table' | 'settings' | 'statistics'>(
+  'dashboard'
+);
 
 const navigateTo = (view: typeof currentView.value) => {
   currentView.value = view;
@@ -96,7 +98,9 @@ onMounted(() => {
 }
 
 :root {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
+    'Helvetica Neue', sans-serif;
   font-size: 16px;
   line-height: 1.5;
   font-weight: 400;

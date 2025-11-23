@@ -38,7 +38,7 @@ const testStorage = async () => {
     const newAccount = await storageService.saveAccount({
       name: '测试账户',
       type: 'bank',
-      description: '调试用测试账户'
+      description: '调试用测试账户',
     });
     result.value += `添加的账户: ${JSON.stringify(newAccount, null, 2)}\n\n`;
 
@@ -50,7 +50,6 @@ const testStorage = async () => {
 
     result.value += '=== 存储服务测试完成 ===\n';
     result.value += '✅ 所有测试通过！存储服务工作正常。\n';
-
   } catch (err) {
     error.value = `存储服务测试失败: ${err}\n${err instanceof Error ? err.stack : ''}`;
     console.error('存储服务测试错误:', err);
@@ -66,7 +65,8 @@ const testStorage = async () => {
   margin: 20px 0;
 }
 
-.result, .error {
+.result,
+.error {
   margin-top: 20px;
   padding: 15px;
   border-radius: 4px;

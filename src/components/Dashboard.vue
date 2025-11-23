@@ -35,16 +35,23 @@
       <h3>资产分布</h3>
       <div v-if="latestSummary && latestSummary.accounts.length > 0" class="chart-container">
         <div class="pie-chart">
-          <div v-for="(account, index) in chartData" :key="account.accountId" class="chart-segment"
-               :style="{
-                 background: getSegmentColor(index),
-                 transform: `rotate(${account.startAngle}deg) skewY(${account.angle}deg)`,
-                 zIndex: chartData.length - index
-               }">
-          </div>
+          <div
+            v-for="(account, index) in chartData"
+            :key="account.accountId"
+            class="chart-segment"
+            :style="{
+              background: getSegmentColor(index),
+              transform: `rotate(${account.startAngle}deg) skewY(${account.angle}deg)`,
+              zIndex: chartData.length - index,
+            }"
+          ></div>
         </div>
         <div class="chart-legend">
-          <div v-for="(account, index) in latestSummary.accounts" :key="account.accountId" class="legend-item">
+          <div
+            v-for="(account, index) in latestSummary.accounts"
+            :key="account.accountId"
+            class="legend-item"
+          >
             <div class="legend-color" :style="{ background: getSegmentColor(index) }"></div>
             <div class="legend-info">
               <span class="legend-name">{{ account.accountName }}</span>
@@ -129,7 +136,7 @@ const chartData = computed(() => {
       ...account,
       percentage,
       angle,
-      startAngle: currentAngle
+      startAngle: currentAngle,
     };
     currentAngle += angle;
     return segment;
@@ -188,8 +195,16 @@ const formatWeekRange = (startDate: string): string => {
 
 const getSegmentColor = (index: number): string => {
   const colors = [
-    '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
-    '#DDA0DD', '#98D8C8', '#F7DC6F', '#85C1E9', '#F8B739'
+    '#FF6B6B',
+    '#4ECDC4',
+    '#45B7D1',
+    '#96CEB4',
+    '#FFEAA7',
+    '#DDA0DD',
+    '#98D8C8',
+    '#F7DC6F',
+    '#85C1E9',
+    '#F8B739',
   ];
   return colors[index % colors.length];
 };
@@ -221,7 +236,9 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 16px;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .card:hover {
@@ -385,7 +402,7 @@ onMounted(() => {
   font-weight: 500;
 }
 
-.record-change[style*="color"] {
+.record-change[style*='color'] {
   color: #666;
 }
 

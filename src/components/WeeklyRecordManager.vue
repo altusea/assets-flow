@@ -8,9 +8,7 @@
             {{ formatWeekRange(week.recordDate) }}
           </option>
         </select>
-        <button @click="showAddForm = true" class="btn btn-primary">
-          记录本周余额
-        </button>
+        <button @click="showAddForm = true" class="btn btn-primary">记录本周余额</button>
       </div>
     </div>
 
@@ -18,13 +16,15 @@
     <div v-if="weeklySummary" class="weekly-summary">
       <div class="summary-header">
         <h3>{{ formatWeekRange(weeklySummary.recordDate) }}</h3>
-        <div class="total-balance">
-          总资产: {{ formatCurrency(weeklySummary.totalBalance) }}
-        </div>
+        <div class="total-balance">总资产: {{ formatCurrency(weeklySummary.totalBalance) }}</div>
       </div>
 
       <div class="account-balances">
-        <div v-for="account in weeklySummary.accounts" :key="account.accountId" class="account-balance">
+        <div
+          v-for="account in weeklySummary.accounts"
+          :key="account.accountId"
+          class="account-balance"
+        >
           <div class="account-info">
             <span class="account-name">{{ account.accountName }}</span>
             <span class="account-type">{{ getAccountTypeLabel(account.accountType as any) }}</span>
@@ -36,9 +36,7 @@
 
     <div v-else-if="selectedWeek" class="empty-week">
       <p>{{ formatWeekRange(selectedWeek) }} 暂无记录</p>
-      <button @click="showAddForm = true" class="btn btn-primary">
-        添加记录
-      </button>
+      <button @click="showAddForm = true" class="btn btn-primary">添加记录</button>
     </div>
 
     <!-- 添加/编辑周记录弹窗 -->
@@ -72,12 +70,8 @@
           </div>
 
           <div class="form-actions" v-if="accounts.length > 0">
-            <button type="submit" class="btn btn-primary">
-              保存记录
-            </button>
-            <button type="button" @click="closeModal" class="btn btn-secondary">
-              取消
-            </button>
+            <button type="submit" class="btn btn-primary">保存记录</button>
+            <button type="button" @click="closeModal" class="btn btn-secondary">取消</button>
           </div>
         </form>
       </div>
@@ -93,9 +87,7 @@
         <div v-for="record in history" :key="record.recordDate" class="history-item">
           <div class="history-week">{{ formatWeekRange(record.recordDate) }}</div>
           <div class="history-total">{{ formatCurrency(record.totalBalance) }}</div>
-          <button @click="viewHistoryDetail(record)" class="btn btn-outline">
-            查看详情
-          </button>
+          <button @click="viewHistoryDetail(record)" class="btn btn-outline">查看详情</button>
         </div>
       </div>
     </div>
@@ -105,7 +97,11 @@
       <div class="modal" @click.stop>
         <h3>{{ formatWeekRange(historyDetail?.recordDate || '') }} 详情</h3>
         <div v-if="historyDetail" class="detail-accounts">
-          <div v-for="account in historyDetail.accounts" :key="account.accountId" class="detail-account">
+          <div
+            v-for="account in historyDetail.accounts"
+            :key="account.accountId"
+            class="detail-account"
+          >
             <div class="detail-info">
               <span class="detail-name">{{ account.accountName }}</span>
               <span class="detail-type">{{ getAccountTypeLabel(account.accountType as any) }}</span>
@@ -117,9 +113,7 @@
           <strong>总计: {{ formatCurrency(historyDetail?.totalBalance || 0) }}</strong>
         </div>
         <div class="form-actions">
-          <button @click="closeHistoryDetail" class="btn btn-secondary">
-            关闭
-          </button>
+          <button @click="closeHistoryDetail" class="btn btn-secondary">关闭</button>
         </div>
       </div>
     </div>
@@ -168,7 +162,7 @@ const loadRecentWeeks = async () => {
     const currentWeekOption = {
       recordDate: currentWeek,
       totalBalance: 0,
-      accounts: []
+      accounts: [],
     };
     recentWeeks.value.unshift(currentWeekOption);
   }
@@ -179,7 +173,7 @@ const saveWeeklyRecords = async () => {
     await storageService.saveWeeklyRecord({
       accountId,
       recordDate: targetWeek.value,
-      balance: balance || 0
+      balance: balance || 0,
     });
   }
 

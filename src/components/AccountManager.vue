@@ -2,9 +2,7 @@
   <div class="account-manager">
     <div class="header">
       <h2>账户管理</h2>
-      <button @click="showAddForm = true" class="btn btn-primary">
-        添加账户
-      </button>
+      <button @click="showAddForm = true" class="btn btn-primary">添加账户</button>
     </div>
 
     <!-- 账户列表 -->
@@ -22,12 +20,8 @@
             </p>
           </div>
           <div class="account-actions">
-            <button @click="editAccount(account)" class="btn btn-secondary">
-              编辑
-            </button>
-            <button @click="deleteAccount(account.id)" class="btn btn-danger">
-              删除
-            </button>
+            <button @click="editAccount(account)" class="btn btn-secondary">编辑</button>
+            <button @click="deleteAccount(account.id)" class="btn btn-danger">删除</button>
           </div>
         </div>
       </div>
@@ -73,9 +67,7 @@
             <button type="submit" class="btn btn-primary">
               {{ editingAccount ? '保存修改' : '添加账户' }}
             </button>
-            <button type="button" @click="closeModal" class="btn btn-secondary">
-              取消
-            </button>
+            <button type="button" @click="closeModal" class="btn btn-secondary">取消</button>
           </div>
         </form>
       </div>
@@ -96,7 +88,7 @@ const editingAccount = ref<Account | null>(null);
 const formData = ref({
   name: '',
   type: 'bank' as Account['type'],
-  description: ''
+  description: '',
 });
 
 const loadAccounts = async () => {
@@ -119,7 +111,7 @@ const editAccount = (account: Account) => {
   formData.value = {
     name: account.name,
     type: account.type,
-    description: account.description || ''
+    description: account.description || '',
   };
 };
 
@@ -136,7 +128,7 @@ const closeModal = () => {
   formData.value = {
     name: '',
     type: 'bank',
-    description: ''
+    description: '',
   };
 };
 

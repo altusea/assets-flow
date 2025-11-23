@@ -1,4 +1,11 @@
-import { Account, WeeklyRecord, WeeklySummary, WeeklyNote, AccountWithChanges, getRecordDate } from './types';
+import {
+  Account,
+  WeeklyRecord,
+  WeeklySummary,
+  WeeklyNote,
+  AccountWithChanges,
+  getRecordDate,
+} from './types';
 import { DrizzleStorageService as NewDrizzleStorageService } from './drizzle-storage';
 
 export type StorageType = 'drizzle-orm';
@@ -13,7 +20,9 @@ export interface IStorageService {
 
   // 周记录管理
   getWeeklyRecords(): Promise<WeeklyRecord[]> | WeeklyRecord[];
-  saveWeeklyRecord(record: Omit<WeeklyRecord, 'id' | 'createdAt' | 'updatedAt'>): Promise<WeeklyRecord> | WeeklyRecord;
+  saveWeeklyRecord(
+    record: Omit<WeeklyRecord, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<WeeklyRecord> | WeeklyRecord;
   deleteWeeklyRecord(id: string): Promise<boolean> | boolean;
   deleteWeeklyRecordsByAccount(accountId: string): Promise<void> | void;
 
@@ -21,22 +30,30 @@ export interface IStorageService {
   getWeeklySummary(recordDate: string): Promise<WeeklySummary | null> | (WeeklySummary | null);
   getAllWeeklySummaries(): Promise<WeeklySummary[]> | WeeklySummary[];
   getRecentWeeks(count?: number): Promise<WeeklySummary[]> | WeeklySummary[];
-  getAccountBalanceHistory(accountId: string, limit?: number): Promise<WeeklyRecord[]> | WeeklyRecord[];
+  getAccountBalanceHistory(
+    accountId: string,
+    limit?: number
+  ): Promise<WeeklyRecord[]> | WeeklyRecord[];
 
   // 备注管理
   getWeeklyNotes(): Promise<WeeklyNote[]> | WeeklyNote[];
-  saveWeeklyNote(note: Omit<WeeklyNote, 'id' | 'createdAt' | 'updatedAt'>): Promise<WeeklyNote> | WeeklyNote;
+  saveWeeklyNote(
+    note: Omit<WeeklyNote, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<WeeklyNote> | WeeklyNote;
   getWeeklyNote(recordDate: string): Promise<WeeklyNote | null> | (WeeklyNote | null);
 
   // 变动趋势计算
-  calculateAccountChanges(accountId: string, currentRecordDate: string): Promise<AccountWithChanges | null> | (AccountWithChanges | null);
-  getAllAccountsWithChanges(currentRecordDate?: string): Promise<AccountWithChanges[]> | AccountWithChanges[];
+  calculateAccountChanges(
+    accountId: string,
+    currentRecordDate: string
+  ): Promise<AccountWithChanges | null> | (AccountWithChanges | null);
+  getAllAccountsWithChanges(
+    currentRecordDate?: string
+  ): Promise<AccountWithChanges[]> | AccountWithChanges[];
 
   // 初始化示例数据
   initializeSampleData(): Promise<void> | void;
 }
-
-
 
 // 存储服务适配器 - Drizzle ORM 适配器（新版，基于 SQLite）
 class DrizzleOrmAdapter implements IStorageService {
@@ -60,7 +77,9 @@ class DrizzleOrmAdapter implements IStorageService {
     return NewDrizzleStorageService.getWeeklyRecords();
   }
 
-  async saveWeeklyRecord(record: Omit<WeeklyRecord, 'id' | 'createdAt' | 'updatedAt'>): Promise<WeeklyRecord> {
+  async saveWeeklyRecord(
+    record: Omit<WeeklyRecord, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<WeeklyRecord> {
     return NewDrizzleStorageService.saveWeeklyRecord(record);
   }
 
@@ -92,7 +111,9 @@ class DrizzleOrmAdapter implements IStorageService {
     return NewDrizzleStorageService.getWeeklyNotes();
   }
 
-  async saveWeeklyNote(note: Omit<WeeklyNote, 'id' | 'createdAt' | 'updatedAt'>): Promise<WeeklyNote> {
+  async saveWeeklyNote(
+    note: Omit<WeeklyNote, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<WeeklyNote> {
     return NewDrizzleStorageService.saveWeeklyNote(note);
   }
 
@@ -100,11 +121,16 @@ class DrizzleOrmAdapter implements IStorageService {
     return NewDrizzleStorageService.getWeeklyNote(recordDate);
   }
 
-  async calculateAccountChanges(accountId: string, currentRecordDate: string): Promise<AccountWithChanges | null> {
+  async calculateAccountChanges(
+    accountId: string,
+    currentRecordDate: string
+  ): Promise<AccountWithChanges | null> {
     return NewDrizzleStorageService.calculateAccountChanges(accountId, currentRecordDate);
   }
 
-  async getAllAccountsWithChanges(currentRecordDate: string = getRecordDate()): Promise<AccountWithChanges[]> {
+  async getAllAccountsWithChanges(
+    currentRecordDate: string = getRecordDate()
+  ): Promise<AccountWithChanges[]> {
     return NewDrizzleStorageService.getAllAccountsWithChanges(currentRecordDate);
   }
 
@@ -137,7 +163,6 @@ export class StorageFactory {
   static async switchStorage(type: StorageType): Promise<IStorageService> {
     return this.getStorageService(type);
   }
-
 }
 
 // 为了向后兼容，导出一个默认的存储服务实例
@@ -168,7 +193,9 @@ export const storageService = {
     return service.getWeeklyRecords();
   },
 
-  async saveWeeklyRecord(record: Omit<WeeklyRecord, 'id' | 'createdAt' | 'updatedAt'>): Promise<WeeklyRecord> {
+  async saveWeeklyRecord(
+    record: Omit<WeeklyRecord, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<WeeklyRecord> {
     const service = await StorageFactory.getStorageService();
     return service.saveWeeklyRecord(record);
   },
@@ -208,7 +235,9 @@ export const storageService = {
     return service.getWeeklyNotes();
   },
 
-  async saveWeeklyNote(note: Omit<WeeklyNote, 'id' | 'createdAt' | 'updatedAt'>): Promise<WeeklyNote> {
+  async saveWeeklyNote(
+    note: Omit<WeeklyNote, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<WeeklyNote> {
     const service = await StorageFactory.getStorageService();
     return service.saveWeeklyNote(note);
   },
@@ -218,12 +247,17 @@ export const storageService = {
     return service.getWeeklyNote(recordDate);
   },
 
-  async calculateAccountChanges(accountId: string, currentRecordDate: string): Promise<AccountWithChanges | null> {
+  async calculateAccountChanges(
+    accountId: string,
+    currentRecordDate: string
+  ): Promise<AccountWithChanges | null> {
     const service = await StorageFactory.getStorageService();
     return service.calculateAccountChanges(accountId, currentRecordDate);
   },
 
-  async getAllAccountsWithChanges(currentRecordDate: string = getRecordDate()): Promise<AccountWithChanges[]> {
+  async getAllAccountsWithChanges(
+    currentRecordDate: string = getRecordDate()
+  ): Promise<AccountWithChanges[]> {
     const service = await StorageFactory.getStorageService();
     return service.getAllAccountsWithChanges(currentRecordDate);
   },
@@ -231,5 +265,5 @@ export const storageService = {
   async initializeSampleData(): Promise<void> {
     const service = await StorageFactory.getStorageService();
     return service.initializeSampleData();
-  }
+  },
 };

@@ -27,7 +27,6 @@
         </div>
       </div>
 
-
       <div class="storage-info">
         <h4>存储信息</h4>
         <div class="info-grid">
@@ -69,7 +68,7 @@ const lastUpdate = ref('未知');
 
 const getCurrentStorageLabel = () => {
   const labels = {
-    'drizzle-orm': 'Drizzle ORM + SQLite 数据库'
+    'drizzle-orm': 'Drizzle ORM + SQLite 数据库',
   };
   return labels[selectedStorage.value || 'drizzle-orm'];
 };
@@ -94,7 +93,6 @@ const loadStorageInfo = async () => {
   }
 };
 
-
 const handleStorageChange = async () => {
   if (!selectedStorage.value) return;
 
@@ -106,7 +104,6 @@ const handleStorageChange = async () => {
     console.error('Failed to switch storage:', error);
   }
 };
-
 
 onMounted(async () => {
   // 获取当前存储类型
@@ -180,7 +177,7 @@ onMounted(async () => {
   background: #f8f9ff;
 }
 
-.radio-option input[type="radio"] {
+.radio-option input[type='radio'] {
   margin: 4px 0 0 0;
 }
 
@@ -199,7 +196,6 @@ onMounted(async () => {
   font-size: 14px;
   color: #666;
 }
-
 
 .storage-info {
   margin-top: 24px;

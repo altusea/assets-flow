@@ -67,7 +67,7 @@ export function getWeekNumber(date: Date = new Date()): number {
 export function formatCurrency(amount: number): string {
   return `¥${amount.toLocaleString('zh-CN', {
     minimumFractionDigits: 2,
-    maximumFractionDigits: 2
+    maximumFractionDigits: 2,
   })}`;
 }
 
@@ -77,7 +77,7 @@ export function formatDate(dateString: string): string {
   return date.toLocaleDateString('zh-CN', {
     year: 'numeric',
     month: '2-digit',
-    day: '2-digit'
+    day: '2-digit',
   });
 }
 
@@ -88,7 +88,7 @@ export function getAccountTypeLabel(type: Account['type']): string {
     cash: '现金',
     pay: '电子支付',
     stock: '股票',
-    other: '其他'
+    other: '其他',
   };
   return labels[type];
 }

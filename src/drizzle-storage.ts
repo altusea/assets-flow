@@ -27,7 +27,11 @@ export class DrizzleStorageService {
             let results: any[] = [];
 
             // 根据查询类型执行不同的操作
-            if (method === 'all' || method === 'get' || sql.trim().toLowerCase().startsWith('select')) {
+            if (
+              method === 'all' ||
+              method === 'get' ||
+              sql.trim().toLowerCase().startsWith('select')
+            ) {
               results = await this.sqliteDb.select(sql, params);
             } else {
               const result = await this.sqliteDb.execute(sql, params);
@@ -91,9 +95,15 @@ export class DrizzleStorageService {
     `);
 
     // 创建索引
-    await this.sqliteDb.execute('CREATE INDEX IF NOT EXISTS idx_weekly_records_date ON weekly_records(recordDate)');
-    await this.sqliteDb.execute('CREATE INDEX IF NOT EXISTS idx_weekly_records_account ON weekly_records(accountId)');
-    await this.sqliteDb.execute('CREATE INDEX IF NOT EXISTS idx_weekly_notes_date ON weekly_notes(recordDate)');
+    await this.sqliteDb.execute(
+      'CREATE INDEX IF NOT EXISTS idx_weekly_records_date ON weekly_records(recordDate)'
+    );
+    await this.sqliteDb.execute(
+      'CREATE INDEX IF NOT EXISTS idx_weekly_records_account ON weekly_records(accountId)'
+    );
+    await this.sqliteDb.execute(
+      'CREATE INDEX IF NOT EXISTS idx_weekly_notes_date ON weekly_notes(recordDate)'
+    );
   }
 
   // 生成唯一 ID
@@ -113,7 +123,7 @@ export class DrizzleStorageService {
     const newAccount: Account = {
       ...account,
       id: this.generateId(),
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
 
     await db.insert(schema.accounts).values(newAccount);
@@ -141,31 +151,42 @@ export class DrizzleStorageService {
   // 周记录管理
   static async getWeeklyRecords(): Promise<WeeklyRecord[]> {
     const db = await this.getDb();
-    const result = await db.select().from(schema.weeklyRecords).orderBy(desc(schema.weeklyRecords.recordDate), desc(schema.weeklyRecords.createdAt));
+    const result = await db
+      .select()
+      .from(schema.weeklyRecords)
+      .orderBy(desc(schema.weeklyRecords.recordDate), desc(schema.weeklyRecords.createdAt));
     return result;
   }
 
-  static async saveWeeklyRecord(record: Omit<WeeklyRecord, 'id' | 'createdAt' | 'updatedAt'>): Promise<WeeklyRecord> {
+  static async saveWeeklyRecord(
+    record: Omit<WeeklyRecord, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<WeeklyRecord> {
     const db = await this.getDb();
     const now = new Date().toISOString();
 
     // 检查是否已存在相同的账户和周记录
-    const existing = await db.select().from(schema.weeklyRecords).where(
-      and(
-        eq(schema.weeklyRecords.accountId, record.accountId),
-        eq(schema.weeklyRecords.recordDate, record.recordDate)
-      )
-    );
+    const existing = await db
+      .select()
+      .from(schema.weeklyRecords)
+      .where(
+        and(
+          eq(schema.weeklyRecords.accountId, record.accountId),
+          eq(schema.weeklyRecords.recordDate, record.recordDate)
+        )
+      );
 
     const newRecord: WeeklyRecord = {
       ...record,
       id: existing.length > 0 ? existing[0].id : this.generateId(),
       createdAt: existing.length > 0 ? existing[0].createdAt : now,
-      updatedAt: now
+      updatedAt: now,
     };
 
     if (existing.length > 0) {
-      await db.update(schema.weeklyRecords).set(newRecord).where(eq(schema.weeklyRecords.id, newRecord.id));
+      await db
+        .update(schema.weeklyRecords)
+        .set(newRecord)
+        .where(eq(schema.weeklyRecords.id, newRecord.id));
     } else {
       await db.insert(schema.weeklyRecords).values(newRecord);
     }
@@ -194,7 +215,7 @@ export class DrizzleStorageService {
         accountId: schema.weeklyRecords.accountId,
         balance: schema.weeklyRecords.balance,
         accountName: schema.accounts.name,
-        accountType: schema.accounts.type
+        accountType: schema.accounts.type,
       })
       .from(schema.weeklyRecords)
       .innerJoin(schema.accounts, eq(schema.weeklyRecords.accountId, schema.accounts.id))
@@ -211,8 +232,8 @@ export class DrizzleStorageService {
         accountId: record.accountId,
         accountName: record.accountName,
         accountType: record.accountType,
-        balance: record.balance
-      }))
+        balance: record.balance,
+      })),
     };
   }
 
@@ -225,24 +246,30 @@ export class DrizzleStorageService {
         accountId: schema.weeklyRecords.accountId,
         balance: schema.weeklyRecords.balance,
         accountName: schema.accounts.name,
-        accountType: schema.accounts.type
+        accountType: schema.accounts.type,
       })
       .from(schema.weeklyRecords)
       .innerJoin(schema.accounts, eq(schema.weeklyRecords.accountId, schema.accounts.id))
       .orderBy(desc(schema.weeklyRecords.recordDate));
 
     // 按周分组
-    const summariesByDate = result.reduce((acc: Record<string, any[]>, record: any) => {
-      if (!acc[record.recordDate]) {
-        acc[record.recordDate] = [];
-      }
-      acc[record.recordDate].push(record);
-      return acc;
-    }, {} as Record<string, any[]>);
+    const summariesByDate = result.reduce(
+      (acc: Record<string, any[]>, record: any) => {
+        if (!acc[record.recordDate]) {
+          acc[record.recordDate] = [];
+        }
+        acc[record.recordDate].push(record);
+        return acc;
+      },
+      {} as Record<string, any[]>
+    );
 
     return Object.entries(summariesByDate).map(([recordDate, records]) => {
       const typedRecords = records as any[];
-      const totalBalance = typedRecords.reduce((sum: number, record: any) => sum + record.balance, 0);
+      const totalBalance = typedRecords.reduce(
+        (sum: number, record: any) => sum + record.balance,
+        0
+      );
 
       return {
         recordDate,
@@ -251,8 +278,8 @@ export class DrizzleStorageService {
           accountId: record.accountId,
           accountName: record.accountName,
           accountType: record.accountType,
-          balance: record.balance
-        }))
+          balance: record.balance,
+        })),
       };
     });
   }
@@ -262,7 +289,10 @@ export class DrizzleStorageService {
     return allSummaries.slice(0, count);
   }
 
-  static async getAccountBalanceHistory(accountId: string, limit: number = 10): Promise<WeeklyRecord[]> {
+  static async getAccountBalanceHistory(
+    accountId: string,
+    limit: number = 10
+  ): Promise<WeeklyRecord[]> {
     const db = await this.getDb();
     const result = await db
       .select()
@@ -277,22 +307,30 @@ export class DrizzleStorageService {
   // 备注管理
   static async getWeeklyNotes(): Promise<WeeklyNote[]> {
     const db = await this.getDb();
-    const result = await db.select().from(schema.weeklyNotes).orderBy(desc(schema.weeklyNotes.recordDate));
+    const result = await db
+      .select()
+      .from(schema.weeklyNotes)
+      .orderBy(desc(schema.weeklyNotes.recordDate));
     return result;
   }
 
-  static async saveWeeklyNote(note: Omit<WeeklyNote, 'id' | 'createdAt' | 'updatedAt'>): Promise<WeeklyNote> {
+  static async saveWeeklyNote(
+    note: Omit<WeeklyNote, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<WeeklyNote> {
     const db = await this.getDb();
     const now = new Date().toISOString();
 
     // 检查是否已存在该日期的备注
-    const existing = await db.select().from(schema.weeklyNotes).where(eq(schema.weeklyNotes.recordDate, note.recordDate));
+    const existing = await db
+      .select()
+      .from(schema.weeklyNotes)
+      .where(eq(schema.weeklyNotes.recordDate, note.recordDate));
 
     const newNote: WeeklyNote = {
       ...note,
       id: existing.length > 0 ? existing[0].id : this.generateId(),
       createdAt: existing.length > 0 ? existing[0].createdAt : now,
-      updatedAt: now
+      updatedAt: now,
     };
 
     if (existing.length > 0) {
@@ -306,16 +344,25 @@ export class DrizzleStorageService {
 
   static async getWeeklyNote(recordDate: string): Promise<WeeklyNote | null> {
     const db = await this.getDb();
-    const result = await db.select().from(schema.weeklyNotes).where(eq(schema.weeklyNotes.recordDate, recordDate));
+    const result = await db
+      .select()
+      .from(schema.weeklyNotes)
+      .where(eq(schema.weeklyNotes.recordDate, recordDate));
     return result.length > 0 ? result[0] : null;
   }
 
   // 变动趋势计算
-  static async calculateAccountChanges(accountId: string, currentRecordDate: string): Promise<AccountWithChanges | null> {
+  static async calculateAccountChanges(
+    accountId: string,
+    currentRecordDate: string
+  ): Promise<AccountWithChanges | null> {
     const db = await this.getDb();
 
     // 获取账户信息
-    const accounts = await db.select().from(schema.accounts).where(eq(schema.accounts.id, accountId));
+    const accounts = await db
+      .select()
+      .from(schema.accounts)
+      .where(eq(schema.accounts.id, accountId));
     if (accounts.length === 0) return null;
 
     const account = accounts[0];
@@ -330,20 +377,25 @@ export class DrizzleStorageService {
     if (allRecords.length === 0) return null;
 
     // 找到当前记录
-    const currentRecord = allRecords.find((r: any) => r.recordDate === currentRecordDate) || allRecords[allRecords.length - 1];
+    const currentRecord =
+      allRecords.find((r: any) => r.recordDate === currentRecordDate) ||
+      allRecords[allRecords.length - 1];
     const currentBalance = currentRecord.balance;
 
     // 计算周变动（与上一周比较）
     const currentIndex = allRecords.findIndex((r: any) => r.id === currentRecord.id);
-    const weeklyChange = currentIndex > 0 ? currentBalance - allRecords[currentIndex - 1].balance : 0;
+    const weeklyChange =
+      currentIndex > 0 ? currentBalance - allRecords[currentIndex - 1].balance : 0;
 
     // 计算月度变动（与4周前比较）
     const monthlyIndex = Math.max(0, currentIndex - 4);
-    const monthlyChange = currentIndex > monthlyIndex ? currentBalance - allRecords[monthlyIndex].balance : 0;
+    const monthlyChange =
+      currentIndex > monthlyIndex ? currentBalance - allRecords[monthlyIndex].balance : 0;
 
     // 计算季度变动（与12周前比较）
     const quarterlyIndex = Math.max(0, currentIndex - 12);
-    const quarterlyChange = currentIndex > quarterlyIndex ? currentBalance - allRecords[quarterlyIndex].balance : 0;
+    const quarterlyChange =
+      currentIndex > quarterlyIndex ? currentBalance - allRecords[quarterlyIndex].balance : 0;
 
     return {
       accountId: account.id,
@@ -352,11 +404,13 @@ export class DrizzleStorageService {
       currentBalance,
       weeklyChange,
       monthlyChange,
-      quarterlyChange
+      quarterlyChange,
     };
   }
 
-  static async getAllAccountsWithChanges(currentRecordDate: string = getRecordDate()): Promise<AccountWithChanges[]> {
+  static async getAllAccountsWithChanges(
+    currentRecordDate: string = getRecordDate()
+  ): Promise<AccountWithChanges[]> {
     const accounts = await this.getAccounts();
     const results: AccountWithChanges[] = [];
 
@@ -380,12 +434,11 @@ export class DrizzleStorageService {
       { name: '招商银行', type: 'bank' as const, description: '工资卡' },
       { name: '支付宝', type: 'pay' as const, description: '日常消费' },
       { name: '微信钱包', type: 'pay' as const, description: '零钱' },
-      { name: '现金', type: 'cash' as const, description: '备用现金' }
+      { name: '现金', type: 'cash' as const, description: '备用现金' },
     ];
 
     for (const account of sampleAccounts) {
       await this.saveAccount(account);
     }
   }
-
 }
